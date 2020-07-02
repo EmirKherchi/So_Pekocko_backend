@@ -29,9 +29,31 @@ app.use((req, res, next) => {
 
 app.use(bodyParser.json()); // tout transformer en json grace à la methode prédéfini Json de bodyParser.
 
+//Post
+
+app.post("/api/auth/signup", (req, res, next) => {
+  console.log(req.body);
+
+  res.status(201).json({ message: "User created" });
+});
+
+app.post("/api/auth/login", (req, res, next) => {
+  console.log(req.body);
+
+  res.status(201).json({ message: "User connected" });
+});
+
+app.post("/api/auth/sauces", (req, res, next) => {
+    console.log(req.body);
+  
+    res.status(201).json({ message: "Sauces posted" });
+  });
+
+
+
 //GET
 
-app.use("/api/sauces", (req, res, next) => {
+app.get("/api/sauces", (req, res, next) => {
   // res.json({
   //     message: "toutes les sauces",
   // })
@@ -56,23 +78,10 @@ app.use("/api/sauces", (req, res, next) => {
   res.status(200).json(sauces);
 });
 
-app.use("/api/sauces/:id", (req, res, next) => {
+app.get("/api/sauces/:id", (req, res, next) => {
   res.status(200).json({
     message: "Sauce unique",
   });
-});
-
-
-//Post
-
-app.use("api/auth/signup", (req, res, next) => {
-  const signup = [
-    {
-      email: "ekherchi@live.fr",
-      password: "1234",
-    },
-  ];
-  res.status(200).json(signup);
 });
 
 module.exports = app; // on export notre app express pour qu'elle puisse être utilisée dans d'autre fichier js
