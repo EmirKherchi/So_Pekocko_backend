@@ -8,6 +8,13 @@ const User = require("./models/users");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken"); // importation de json webtoken pour création envoi et reception des tokens
 
+const multer = require('./multer-config'); //on importe multer
+const fs = require('fs');
+const path = require("path");
+
+
+
+
 // Mise en place de la base de donnée avec mongoose
 mongoose
   .connect("mongodb+srv://Emir:OcrStudent@cluster0.z9uvt.mongodb.net/test", {
@@ -33,6 +40,9 @@ app.use((req, res, next) => {
 });
 
 app.use(bodyParser.json()); // tout transformer en json grace à la methode prédéfini Json de bodyParser.
+
+//Gestion de la ressource image de façon statique
+app.use("/images", express.static(path.join(__dirname, "images")));
 
 //Post
 
@@ -110,29 +120,27 @@ app.post("/api/auth/login", (req, res, next) => {
     );
 });
 
-app.post("/api/sauces", (req, res, next) => {
-  delete req.body._id; // Le champs _iD est supprimé du body qui sera envoyé car celui-ci est généré automatiquement par mongoDb
-
+app.post("/api/sauces",multer, (req, res, next) => {
+  const sauceObjet = JSON.parse(req.body.sauce);
   const sauce = new sauces({
-    ...req.body, //modèle rempli automatiquement à la manière dun prototype objet (title = this.title,...);
+    ...sauceObjet,
+    imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
   });
-
-  // on enregistre et renvoi une reponse.
   sauce
     .save()
-    .then(() =>
-      res.status(201).json({
-        // reponse reçu si envoi OK
-        message: "Sauce enregistré dans la base de donnée",
-      })
-    )
-    .catch((error) =>
+    .then((sauce) => {
+      res.status(201).json({ sauce });
+    })
+    .catch((error) => {
       res.status(400).json({
-        error, //logerra l'erreur dans la console javascript
-      })
-    );
+        error: error,
+      });
+    });
 });
 
+//PUT
+
+app.put("/")
 //GET
 
 app.get("/api/sauces", (req, res, next) => {
