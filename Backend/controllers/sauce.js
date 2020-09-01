@@ -2,7 +2,7 @@ const Sauce = require('../models/Sauce');
 const fs = require('fs');
 
 // POST
-exports.createSauce = async (req, res) => {
+exports.createOneSauce= async (req, res) => {
     const sauceObject = JSON.parse(req.body.sauce);
     delete sauceObject._id;
     const sauce = new Sauce({
@@ -18,7 +18,7 @@ exports.createSauce = async (req, res) => {
 }
 
 // GET
-exports.getSauces = async (req, res, next) => {
+exports.getAllSauces = async (req, res, next) => {
     try {
         const sauces = await Sauce.find();
         res.status(200).send(sauces)
@@ -28,7 +28,7 @@ exports.getSauces = async (req, res, next) => {
 }
 
 // GET ONE
-exports.getSauce = async (req, res) => {
+exports.getOneSauce = async (req, res) => {
     try {
         const sauce = await Sauce.findById(req.params.id)
         if (!sauce) {
@@ -70,23 +70,23 @@ exports.deleteSauce = async (req, res) => {
 }
 
 // POST Like or Dislike
-exports.likeOrDislike = async (req, res) => {
+exports.likeOrDislikeOneSauce = async (req, res) => {
     try {
         const sauce = await Sauce.findById(req.params.id)
         if (req.body.like === 1) { 
             if( !sauce.usersLiked.includes(req.body.userId)) {
                 await Sauce.updateOne({ _id: req.params.id }, {
-                        $push: {
+                        $push: {  //The $push operator appends a specified value to an array.
                             usersLiked: req.body.userId
                         }, 
-                        $inc: { 
+                        $inc: {  //The $inc operator increments a field by a specified value 
                             likes: 1 }} )                    
             } 
         res.status(200).send(sauce)
         } else if (req.body.like === 0) {
             if ( sauce.usersLiked.includes(req.body.userId)) {
                 await Sauce.updateOne({ _id: req.params.id }, {
-                        $pull: {
+                        $pull: { //The $pull operator removes from an existing array all instances of a value
                             usersLiked: req.body.userId
                         }, 
                         $inc: { 

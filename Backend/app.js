@@ -8,8 +8,8 @@ const xss = require('xss-clean');
 const rateLimit = require('express-rate-limit');
 const hpp = require('hpp');
 
-const sauceRouter = require('./routes/sauce');
-const userRouter = require('./routes/user');
+const sauceRoutes = require('./routes/sauce');
+const userRoutes = require('./routes/user');
 
 // Connection à la base de données
 mongoose
@@ -22,24 +22,27 @@ mongoose
 
 
 const app = express();
+
+//***/  apply to all requests /*** //
+
 app.use(express.json());
 
 // Permet CORS, npm dependance 
 app.use(cors());
 
-// Désinfecte les données
+// The sanitize function will strip out any keys that start with '$' in the input
 app.use(mongoSanitize());
 
-// Configure en-têtes HTTP
+// Setting various HTTP headers.
 app.use(helmet());
 
 // Empêche les attaques cross-site scripting (xss)
 app.use(xss());
 
-// Limite le nombre de requête pour eviter attaque DDoS(deni de service)
+// Limite le nombre de requête pour eviter attaque DDoS(deni de service) // to limit repeated requests
 const limiter = rateLimit({
-    windowMs: 10 * 60 * 1000, // 10 mins
-    max: 100
+    windowMs: 15 * 60 * 1000, // 15 mins
+    max: 100 //limit each IP to 100 requests per windowMs
 });
 app.use(limiter);
 
@@ -49,7 +52,7 @@ app.use(hpp());
 // Gestion des fichiers statiques images
 app.use('/images', express.static(path.join(__dirname, 'images')));
 
-app.use('/api/auth', userRouter);
-app.use('/api/sauces', sauceRouter);
+app.use('/api/auth', userRoutes);
+app.use('/api/sauces', sauceRoutes);
 
 module.exports = app;
