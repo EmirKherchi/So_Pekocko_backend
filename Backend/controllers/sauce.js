@@ -1,9 +1,7 @@
 const Sauce = require('../models/Sauce');
 const fs = require('fs');
 
-// @desc Crée nouvelle sauce
-// @route POST /api/sauces
-// @access Privée
+// POST
 exports.createSauce = async (req, res) => {
     const sauceObject = JSON.parse(req.body.sauce);
     delete sauceObject._id;
@@ -19,9 +17,7 @@ exports.createSauce = async (req, res) => {
     }
 }
 
-// @desc Récupère toutes les sauces
-// @route GET /api/sauces
-// @access Privée
+// GET
 exports.getSauces = async (req, res, next) => {
     try {
         const sauces = await Sauce.find();
@@ -31,9 +27,7 @@ exports.getSauces = async (req, res, next) => {
     }
 }
 
-// @desc Récupère une sauce
-// @route GET /api/sauces/:id
-// @access Privée
+// GET ONE
 exports.getSauce = async (req, res) => {
     try {
         const sauce = await Sauce.findById(req.params.id)
@@ -46,9 +40,7 @@ exports.getSauce = async (req, res) => {
     }
 }
 
-// @desc Modifie une sauce
-// @route PUT /api/sauces/:id
-// @access Privée
+// PUT Update
 exports.updateSauce = async (req, res) => {
     try {
         const sauceObject = req.file ?
@@ -63,9 +55,7 @@ exports.updateSauce = async (req, res) => {
     }
 }
 
-// @desc Supprime une sauce
-// @route DELETE /api/sauces/:id
-// @access Privée
+// DELETE
 exports.deleteSauce = async (req, res) => {
     try {
         const sauce = await Sauce.findOne({ _id: req.params.id })
@@ -79,9 +69,7 @@ exports.deleteSauce = async (req, res) => {
     }
 }
 
-// @desc Ajoute opinion pour la sauce
-// @route POST /api/sauces/:id
-// @access Privée
+// POST Like or Dislike
 exports.likeOrDislike = async (req, res) => {
     try {
         const sauce = await Sauce.findById(req.params.id)
