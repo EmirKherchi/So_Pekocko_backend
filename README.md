@@ -6,4 +6,4 @@ Le projet a été généré avec [Angular CLI](https://github.com/angular/angula
 
 Dans le dossier frontEnd --> Démarrer `ng serve` pour avoir accès au serveur de développement. Rendez-vous sur `http://localhost:4200/`. L'application va se recharger automatiquement si vous modifiez un fichier source.
 
-Dans le dossier Backed --> Démarrer avec node server
+Dans le dossier Backend --> Démarrer avec node server
