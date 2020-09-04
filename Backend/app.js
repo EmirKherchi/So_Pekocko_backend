@@ -1,12 +1,14 @@
 const express = require('express');
 const path = require('path');
 const mongoose = require('mongoose');
+
 const cors = require('cors');
 const mongoSanitize = require('express-mongo-sanitize');
 const helmet = require('helmet');
 const xss = require('xss-clean');
 const rateLimit = require('express-rate-limit');
 const hpp = require('hpp');
+const session = require('express-session')
 
 const sauceRoutes = require('./routes/sauce');
 const userRoutes = require('./routes/user');
@@ -25,7 +27,8 @@ const app = express();
 
 //***/  apply to all requests /*** //
 
-app.use(express.json());
+//toutes requetes en JSON
+app.use(express.json()); 
 
 // Permet CORS, npm dependance 
 app.use(cors());
@@ -46,11 +49,24 @@ const limiter = rateLimit({
 });
 app.use(limiter);
 
-// Empêche la pollution des paramètres http
+// Empêche la pollution des paramètres http eviter les paramètre de l'url vérifier
 app.use(hpp());
+
+// Emepeche la récupération d'informations d'identification dans les cookies 
+app.set('trust proxy', 1) // trust first proxy
+
+app.use(session({
+  secret: 'keyboard', //nom et mdp générique
+  name:'session',
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: true }
+}))
 
 // Gestion des fichiers statiques images
 app.use('/images', express.static(path.join(__dirname, 'images')));
+
+//**Appel des routes sur les requetes auth et sauces**//
 
 app.use('/api/auth', userRoutes);
 app.use('/api/sauces', sauceRoutes);
